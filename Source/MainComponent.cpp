@@ -84,8 +84,8 @@ public:
       cout << "Loading: " << filePath << endl;
       ScopedPointer<AudioFormatReader> audioReader (wavFormat.createReaderFor(new FileInputStream(filePath), true));
       BigInteger noteRange;
-      //NoteRange.setRange(intNote, 1, true);
-      noteRange.setRange(0, 128, true);
+      noteRange.setRange(intNote, 1, true);
+      //noteRange.setRange(0, 128, true);
       synth.addSound(
         new SamplerSound(
           "sample",
@@ -94,7 +94,7 @@ public:
           intNote, // root midi note
           0.1,     // attack time
           0.1,     // release time
-          10.0     // max sample length
+          15.0     // max sample length
         )
       );
     }

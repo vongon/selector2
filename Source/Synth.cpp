@@ -2,7 +2,7 @@
 #define SYNTH_H_
 #include "../JuceLibraryCode/JuceHeader.h"
 
-const float VELOCITY = 1.0f;
+//const float VELOCITY = 1.0f;
 
 class Synth: public juce::Synthesiser {
 public:
