@@ -1,99 +1,111 @@
-/*
-  ==============================================================================
-
-    This file was auto-generated!
-
-  ==============================================================================
-*/
-
 #ifndef MAINCOMPONENT_H_INCLUDED
 #define MAINCOMPONENT_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "./Synth.cpp"
 
-//==============================================================================
-/*
-    This component lives inside our window, and this is where you should put all
-    your controls and content.
-*/
+using namespace std;
+
+const String AUDIO_FILE_FORMAT = ".wav";
+const String SAMPLES_PATH = "/Users/RyanJamesMcGill/Documents/Projects/JuceProjects/selector2/audioSamples/";
+
 class MainContentComponent   : public AudioAppComponent
 {
 public:
-    //==============================================================================
-    MainContentComponent()
-    {
-        setSize (800, 600);
+  //==============================================================================
+  MainContentComponent()
+  {
+    setAudioChannels (0, 2);
+    initialiseMidi();
+    initialiseSynth();
+  }
 
-        // specify the number of input and output channels that we want to open
-        setAudioChannels (2, 2);
+  ~MainContentComponent()
+  {
+    shutdownAudio();
+  }
+
+  //==============================================================================
+  void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override
+  {
+    midiCollector.reset(sampleRate);
+    synth.setCurrentPlaybackSampleRate(sampleRate);
+  }
+
+  void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override
+  {
+    bufferToFill.clearActiveBufferRegion();
+    MidiBuffer incomingMidi;
+    midiCollector.removeNextBlockOfMessages(incomingMidi, bufferToFill.numSamples);
+    synth.renderNextBlock(*bufferToFill.buffer, incomingMidi, 0, bufferToFill.numSamples);
+  }
+
+  void releaseResources() override
+  {
+    // This will be called when the audio device stops, or when it is being
+    // restarted due to a setting change.
+
+    // For more details, see the help for AudioProcessor::releaseResources()
+  }
+
+  //==============================================================================
+  void initialiseMidi()
+  {
+    const StringArray list (MidiInput::getDevices());
+    String midiDeviceName = list[MidiInput::getDefaultDeviceIndex()];
+    if(midiDeviceName.isEmpty()){
+      cout << "No midi devices detected." << endl;
+    } else {
+      cout << "activating midi device: " << midiDeviceName << endl;
+      deviceManager.setMidiInputEnabled(midiDeviceName, true);
+      deviceManager.addMidiInputCallback(midiDeviceName, &midiCollector);   
     }
+  }
 
-    ~MainContentComponent()
-    {
-        shutdownAudio();
+  void initialiseSynth()
+  {
+    for (int i = 0; i < 16; i++) {
+      synth.addVoice(new SamplerVoice());
     }
-
-    //==============================================================================
-    void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override
+    String filePath;
+    for (int i = 0; i < 128; i++)
     {
-        // This function will be called when the audio device is started, or when
-        // its settings (i.e. sample rate, block size, etc) are changed.
-
-        // You can use this function to initialise any resources you might need,
-        // but be careful - it will be called on the audio thread, not the GUI thread.
-
-        // For more details, see the help for AudioProcessor::prepareToPlay()
+      filePath = SAMPLES_PATH;
+      filePath.operator+=(i);
+      filePath.append(AUDIO_FILE_FORMAT, AUDIO_FILE_FORMAT.length());
+      setUsingSampledSound(filePath, i);
     }
+  }
 
-    void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override
-    {
-        // Your audio-processing code goes here!
-
-        // For more details, see the help for AudioProcessor::getNextAudioBlock()
-
-        // Right now we are not producing any data, in which case we need to clear the buffer
-        // (to prevent the output of random noise)
-        bufferToFill.clearActiveBufferRegion();
+  void setUsingSampledSound(String filePath, int intNote)
+  {
+    WavAudioFormat wavFormat;
+    if (File(filePath).exists()){
+      cout << "Loading: " << filePath << endl;
+      ScopedPointer<AudioFormatReader> audioReader (wavFormat.createReaderFor(new FileInputStream(filePath), true));
+      BigInteger noteRange;
+      //NoteRange.setRange(intNote, 1, true);
+      noteRange.setRange(0, 128, true);
+      synth.addSound(
+        new SamplerSound(
+          "sample",
+          *audioReader,
+          noteRange,
+          intNote, // root midi note
+          0.1,     // attack time
+          0.1,     // release time
+          10.0     // max sample length
+        )
+      );
     }
+  }
 
-    void releaseResources() override
-    {
-        // This will be called when the audio device stops, or when it is being
-        // restarted due to a setting change.
+  MidiMessageCollector midiCollector;
+  Synth synth;
 
-        // For more details, see the help for AudioProcessor::releaseResources()
-    }
-
-    //==============================================================================
-    void paint (Graphics& g) override
-    {
-        // (Our component is opaque, so we must completely fill the background with a solid colour)
-        g.fillAll (Colours::black);
-
-
-        // You can add your drawing code here!
-    }
-
-    void resized() override
-    {
-        // This is called when the MainContentComponent is resized.
-        // If you add any child components, this is where you should
-        // update their positions.
-    }
-
-
-private:
-    //==============================================================================
-
-    // Your private member variables go here...
-
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };
 
-
-// (This function is called by the app startup code to create our main component)
-Component* createMainContentComponent()     { return new MainContentComponent(); }
-
+Component* createMainContentComponent()  { return new MainContentComponent(); }
 
 #endif  // MAINCOMPONENT_H_INCLUDED

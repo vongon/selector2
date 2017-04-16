@@ -64,6 +64,7 @@ ifeq ($(CONFIG),Release)
 endif
 
 OBJECTS := \
+  $(JUCE_OBJDIR)/Synth_d919089d.o \
   $(JUCE_OBJDIR)/MainComponent_a6ffb4a5.o \
   $(JUCE_OBJDIR)/Main_90ebc5c2.o \
   $(JUCE_OBJDIR)/juce_audio_basics_6b797ca1.o \
@@ -101,6 +102,11 @@ clean:
 strip:
 	@echo Stripping selector2
 	-@$(STRIP) --strip-unneeded $(JUCE_OUTDIR)/$(TARGET)
+
+$(JUCE_OBJDIR)/Synth_d919089d.o: ../../Source/Synth.cpp
+	-@mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling Synth.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/MainComponent_a6ffb4a5.o: ../../Source/MainComponent.cpp
 	-@mkdir -p $(JUCE_OBJDIR)

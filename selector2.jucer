@@ -5,6 +5,7 @@
               jucerVersion="4.3.1">
   <MAINGROUP id="UhbxEM" name="selector2">
     <GROUP id="{DD0EDBBA-888D-64BA-9DD3-8B3109464F40}" name="Source">
+      <FILE id="V7BipJ" name="Synth.cpp" compile="1" resource="0" file="Source/Synth.cpp"/>
       <FILE id="t7WtMd" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
       <FILE id="wzdCcq" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
