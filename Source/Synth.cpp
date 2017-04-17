@@ -2,7 +2,7 @@
 #define SYNTH_H_
 #include "../JuceLibraryCode/JuceHeader.h"
 
-//const float VELOCITY = 1.0f;
+const float VELOCITY = 0.5f;
 
 class Synth: public juce::Synthesiser {
 public:
@@ -12,11 +12,11 @@ public:
 
       if (m.isNoteOn())
       {
-          noteOn (channel, m.getNoteNumber(), m.getFloatVelocity());
+          noteOn (channel, m.getNoteNumber(), VELOCITY);
       }
       else if (m.isNoteOff())
       {
-          noteOff (channel, m.getNoteNumber(), m.getFloatVelocity(), true);
+          noteOff (channel, m.getNoteNumber(), VELOCITY, true);
       }
       else if (m.isAllNotesOff() || m.isAllSoundOff())
       {
