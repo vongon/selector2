@@ -12,7 +12,7 @@
 
 using namespace std;
 
-Component* createMainContentComponent();
+Component* createMainContentComponent(String samplesPath);
 
 //==============================================================================
 class selector2Application  : public JUCEApplication
@@ -30,7 +30,10 @@ public:
   {
     cout << "--- S E L E C T O R ---" << endl;
     cout << "App version: " << getApplicationVersion() << endl;
-    createMainContentComponent();
+    StringArray parameters = getCommandLineParameterArray();
+    String samplesPath = parameters[0];
+    createMainContentComponent(samplesPath);
+    
   }
 
   void shutdown() override
