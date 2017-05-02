@@ -50,9 +50,9 @@ ifeq ($(CONFIG),Release)
   JUCE_OBJDIR := build/intermediate/Release
   JUCE_OUTDIR := build
 
-  ifeq ($(TARGET_ARCH),)
-    TARGET_ARCH := -march=native
-  endif
+#  ifeq ($(TARGET_ARCH),)
+#    TARGET_ARCH := -march=native
+#  endif
 
   JUCE_CPPFLAGS := $(DEPFLAGS) -DLINUX=1 -DNDEBUG=1 -DJUCE_USE_XSHM=0 -DJUCE_USE_XINERAMA=0 -DJUCER_LINUX_MAKE_6D53C8B4=1 -DJUCE_APP_VERSION=1.0.0 -DJUCE_APP_VERSION_HEX=0x10000 $(shell pkg-config --cflags alsa freetype2 libcurl x11 xext xinerama) -pthread -I../../JuceLibraryCode -I../../JuceLibraryCode/modules $(CPPFLAGS)
   JUCE_CFLAGS += $(JUCE_CPPFLAGS) $(TARGET_ARCH) -O3 $(CFLAGS)
