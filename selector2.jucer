@@ -70,4 +70,7 @@
                JUCE_ENABLE_REPAINT_DEBUGGING="disabled" JUCE_USE_XSHM="disabled"
                JUCE_USE_XRENDER="disabled" JUCE_USE_XCURSOR="disabled" JUCE_WEB_BROWSER="disabled"
                JUCE_ENABLE_LIVE_CONSTANT_EDITOR="disabled"/>
+  <LIVE_SETTINGS>
+    <OSX/>
+  </LIVE_SETTINGS>
 </JUCERPROJECT>
